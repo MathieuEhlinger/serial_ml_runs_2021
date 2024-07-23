@@ -1,0 +1,50 @@
+The idea of the project was to allow rapid creation of ML_runs objects (called
+MetaExperiment) with interchangeable dataset, target, metrics and ML model 
+building functions. Those classes are used in the data_prep project. 
+
+After going through the steps described in the last section (example script), 
+one would have a dataset split with regards to most important confounders, 
+estimation of performances of dummy classifiers, automatically generated ML 
+models for the task (different possible methods there, either derived from 
+auto-sklearn or TPOT), performance estimation on the train dataset (expected to
+ be overfitted), on the dataset held as hold-out, as well as on the whole data-
+ set (default method there being 10 Fold 10 repeat CV).
+
+The MetaExperiment could then be fed to scripts for visualization of the out-
+put.
+
+The library was used to perform the runs performed in:
+https://docserv.uni-duesseldorf.de/servlets/DerivateServlet/Derivate-71273/Doktorarbeit_Mathieu_Ehlinger_Delcourt-Fassung_14_05_24.pdf#page=26&zoom=70,-582,842
+
+The project suffers from not having read 'Clean Code' before it was started.
+It also suffers from having been tailored specifically coded for the data stru-
+cture at hand and the specific targets back then. If it were to be modified for
+further use, this would have to be changed.
+
+How it goes, with correct init (see children classes for examples)
+
+#Example with Age as target
+
+from ml_run_lib.age_meta_exp import AgeAsklExperiment
+
+#Initialization of MetaExp
+age_meta_exp = AgeAsklExperiment()
+
+#Initialization of dummy runs
+run_all_dummies_on_exp_dir()     
+
+#Run the initial model creation. Can take a while.
+age_meta_exp.phase_1_exp()
+age_meta_exp.save()
+
+#Run the evaluation of performances on the different splits. Can take a while.
+age_meta_exp.launch_all_raw_retest()
+age_meta_exp.save()
+  
+#Run second_phase_a if this phase differs from a simple retest. Can take a while.
+age_meta_exp.second_phase_a()
+age_meta_exp.save()
+
+#Run second_phase_a if this phase differs from a simple retest. Can take a while.
+age_meta_exp.gather_all_retest_raw(with_save=True)
+age_meta_exp.save()
